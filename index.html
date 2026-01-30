@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>AMERTA</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 
@@ -13,11 +13,10 @@
       margin: 0;
       padding: 0;
       background: #000;
-      overflow: hidden;
     }
     canvas {
       display: block;
-      margin: 0 auto;
+      margin: auto;
     }
   </style>
 </head>
@@ -25,18 +24,13 @@
 <body>
 
 <script>
-let player;
-let cursors;
-let hp = 100;
-let hpText;
-
 const config = {
   type: Phaser.AUTO,
   width: 360,
   height: 640,
-  backgroundColor: '#1a1a1a',
+  backgroundColor: "#111",
   physics: {
-    default: 'arcade',
+    default: "arcade",
     arcade: {
       gravity: { y: 0 },
       debug: false
@@ -49,69 +43,55 @@ const config = {
   }
 };
 
+let player;
+let cursors;
+
 new Phaser.Game(config);
 
 function preload() {
-  this.load.image('player', 'https://i.imgur.com/6X12Z3B.png');
-  this.load.image('enemy', 'https://i.imgur.com/8Qf4K2U.png');
+  this.load.image("player", "https://i.imgur.com/6X1ZB3B.png");
 }
 
 function create() {
-  player = this.physics.add.sprite(180, 320, 'player');
-  player.setCollideWorldBounds(true);
+  player = this.physics.add.sprite(180, 320, "player");
   player.setScale(0.5);
-
-  this.enemies = this.physics.add.group({
-    key: 'enemy',
-    repeat: 3,
-    setXY: { x: 50, y: 50, stepX: 80 }
-  });
-
-  this.enemies.children.iterate(enemy => {
-    enemy.setScale(0.4);
-    enemy.setVelocity(
-      Phaser.Math.Between(-100, 100),
-      Phaser.Math.Between(-100, 100)
-    );
-    enemy.setBounce(1);
-    enemy.setCollideWorldBounds(true);
-  });
-
-  this.physics.add.overlap(player, this.enemies, hitEnemy, null, this);
+  player.setCollideWorldBounds(true);
 
   cursors = this.input.keyboard.createCursorKeys();
 
-  hpText = this.add.text(10, 10, 'HP: 100', {
-    fontSize: '18px',
-    fill: '#fff'
+  // touch HP
+  this.input.on("pointerdown", pointer => {
+    if (pointer.x < 180) {
+      player.setVelocityX(-200);
+    } else {
+      player.setVelocityX(200);
+    }
   });
 
-  // Touch control (HP ONLY)
-  this.input.on('pointerdown', pointer => {
-    player.x = pointer.x;
-    player.y = pointer.y;
+  this.input.on("pointerup", () => {
+    player.setVelocity(0);
   });
 }
 
 function update() {
-  if (cursors.left.isDown) player.setVelocityX(-200);
-  else if (cursors.right.isDown) player.setVelocityX(200);
-  else player.setVelocityX(0);
+  if (cursors.left.isDown) {
+    player.setVelocityX(-200);
+  } 
+  else if (cursors.right.isDown) {
+    player.setVelocityX(200);
+  } 
+  else {
+    player.setVelocityX(0);
+  }
 
-  if (cursors.up.isDown) player.setVelocityY(-200);
-  else if (cursors.down.isDown) player.setVelocityY(200);
-  else player.setVelocityY(0);
-}
-
-function hitEnemy(player, enemy) {
-  hp -= 10;
-  hpText.setText('HP: ' + hp);
-  enemy.disableBody(true, true);
-
-  if (hp <= 0) {
-    hpText.setText('GAME OVER');
-    player.setTint(0xff0000);
-    player.setVelocity(0);
+  if (cursors.up.isDown) {
+    player.setVelocityY(-200);
+  } 
+  else if (cursors.down.isDown) {
+    player.setVelocityY(200);
+  } 
+  else {
+    player.setVelocityY(0);
   }
 }
 </script>
