@@ -1,2 +1,0 @@
-# Amerta
-Game amerta
